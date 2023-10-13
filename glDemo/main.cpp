@@ -1,5 +1,10 @@
 
 #include "core.h"
+#include "semi-circle-immediate-mode.h"
+#include "semi-circle-vertexarray.h"
+#include "texture-quad-immediate.h"
+#include "texture-quad-vertexarray.h"
+#include "texture-quad-interleaved.h"
 
 using namespace std;
 
@@ -16,6 +21,7 @@ const unsigned int initHeight = 512;
 
 // Function prototypes
 void renderScene();
+GLuint loadTexture(string filename, FREE_IMAGE_FORMAT srcImageType);
 void resizeWindow(GLFWwindow* window, int width, int height);
 void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int mods);
 void updateScene();
@@ -69,45 +75,7 @@ int main() {
 	// Setup textures
 	//
 
-	// Load image file from disk
-	auto textureImageFile = string("Assets\\Textures\\player1_ship.png");
-	FIBITMAP* bitmap = FreeImage_Load(FIF_PNG, textureImageFile.c_str(), BMP_DEFAULT);
-
-	if (bitmap) {
-
-		// If image loaded, setup new texture object in OpenGL
-		glGenTextures(1, &playerTexture); // can create more than 1!
-		
-		if (playerTexture) {
-
-			glBindTexture(GL_TEXTURE_2D, playerTexture);
-
-			// Setup texture image properties
-			glTexImage2D(
-				GL_TEXTURE_2D,
-				0,
-				GL_RGBA,
-				FreeImage_GetWidth(bitmap),
-				FreeImage_GetHeight(bitmap),
-				0,
-				GL_BGRA,
-				GL_UNSIGNED_BYTE,
-				FreeImage_GetBits(bitmap));
-
-			// Setup texture filter and wrap properties
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		}
-
-		// Once the texture has been setup, the image data is copied into OpenGL.  We no longer need the originally loaded image
-		FreeImage_Unload(bitmap);
-	}
-	else {
-
-		cout << "Error loading image!" << endl;
-	}
+	playerTexture = loadTexture(string("Assets\\Textures\\player1_ship.png"), FIF_PNG);
 
 
 
@@ -134,35 +102,75 @@ int main() {
 }
 
 
-
 // renderScene - function to render the current scene
 void renderScene()
 {
 	// Clear the rendering window
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Render objects here...
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, playerTexture);
+	//drawSemiCircleImmediate();
+	//drawSemiCircleVertexArray();
+	//drawTexturedQuadImmediate(playerTexture);
+	//drawTextureQuadVertexArray(playerTexture);
+	drawTextureQuadInterleaved(playerTexture);
+}
 
-	glBegin(GL_QUADS);
 
-	glTexCoord2f(0.0f, 1.0f);
-	glVertex2f(-0.5f, 0.5f);
+// Utility function to load an image using FreeImage, convert to 32 bits-per-pixel (bpp) and setup and return a new texture object based on this.
+GLuint loadTexture(string filename, FREE_IMAGE_FORMAT srcImageType) {
 
-	glTexCoord2f(1.0f, 1.0f);
-	glVertex2f(0.5f, 0.5f);
+	// Load and validate bitmap
+	FIBITMAP* loadedBitmap = FreeImage_Load(srcImageType, filename.c_str(), BMP_DEFAULT);
 
-	glTexCoord2f(1.0f, 0.0f);
-	glVertex2f(0.5f, -0.5f);
+	if (!loadedBitmap) {
 
-	glTexCoord2f(0.0f, 0.0f);
-	glVertex2f(-0.5f, -0.5f);
+		cout << "FreeImage: Could not load image " << filename << endl;
+		return 0;
+	}
 
-	glEnd();
+	// Comvert to RGBA format
+	FIBITMAP* bitmap32bpp = FreeImage_ConvertTo32Bits(loadedBitmap);
+	FreeImage_Unload(loadedBitmap);
 
-	glDisable(GL_BLEND);
-	glDisable(GL_TEXTURE_2D);
+	if (!bitmap32bpp) {
+
+		cout << "FreeImage: Conversion to 32 bits unsuccessful for image " << filename << endl;
+		return 0;
+	}
+
+	// Image loaded and converted - setup new texture object
+	GLuint newTexture = 0;
+
+	// If image loaded, setup new texture object in OpenGL
+	glGenTextures(1, &newTexture); // can create more than 1!
+
+	if (newTexture) {
+
+		glBindTexture(GL_TEXTURE_2D, newTexture);
+
+		// Setup texture image properties
+		glTexImage2D(
+			GL_TEXTURE_2D,
+			0,
+			GL_RGBA,
+			FreeImage_GetWidth(bitmap32bpp),
+			FreeImage_GetHeight(bitmap32bpp),
+			0,
+			GL_BGRA,
+			GL_UNSIGNED_BYTE,
+			FreeImage_GetBits(bitmap32bpp));
+
+		// Setup texture filter and wrap properties
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	}
+
+	// Once the texture has been setup, the image data is copied into OpenGL.  We no longer need the originally loaded image
+	FreeImage_Unload(bitmap32bpp);
+
+	return newTexture;
 }
 
 
