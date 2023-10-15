@@ -5,6 +5,7 @@
 #include "texture-quad-immediate.h"
 #include "texture-quad-vertexarray.h"
 #include "texture-quad-interleaved.h"
+#include "arwing.h"
 
 using namespace std;
 
@@ -70,6 +71,8 @@ int main() {
 	// Initialise scene - geometry and shaders etc
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // setup background colour to be black
 
+	gluOrtho2D(-10.0f, 10.0f, -10.0f, 10.0f);
+
 
 	//
 	// Setup textures
@@ -112,7 +115,8 @@ void renderScene()
 	//drawSemiCircleVertexArray();
 	//drawTexturedQuadImmediate(playerTexture);
 	//drawTextureQuadVertexArray(playerTexture);
-	drawTextureQuadInterleaved(playerTexture);
+	//drawTextureQuadInterleaved(playerTexture);
+	drawArwingImmediate();
 }
 
 

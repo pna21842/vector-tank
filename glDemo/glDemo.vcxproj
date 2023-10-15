@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="arwing.h" />
     <ClInclude Include="core.h" />
     <ClInclude Include="FreeImage\FreeImage.h" />
     <ClInclude Include="FreeImage\FreeImagePlus.h" />
@@ -144,6 +145,7 @@
     <ClInclude Include="texture-quad-vertexarray.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="arwing.cpp" />
     <ClCompile Include="core.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="semi-circle-immediate-mode.cpp" />
