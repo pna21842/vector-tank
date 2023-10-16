@@ -71,7 +71,7 @@ int main() {
 	// Initialise scene - geometry and shaders etc
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // setup background colour to be black
 
-	gluOrtho2D(-10.0f, 10.0f, -10.0f, 10.0f);
+	//gluOrtho2D(-10.0f, 10.0f, -10.0f, 10.0f);
 
 
 	//
@@ -112,11 +112,12 @@ void renderScene()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//drawSemiCircleImmediate();
-	//drawSemiCircleVertexArray();
+	drawSemiCircleVertexArray();
 	//drawTexturedQuadImmediate(playerTexture);
 	//drawTextureQuadVertexArray(playerTexture);
 	//drawTextureQuadInterleaved(playerTexture);
-	drawArwingImmediate();
+	//drawArwingImmediate();
+	//drawArwingVertexArray();
 }
 
 
