@@ -11,10 +11,10 @@ static float positions[] = {
 
 static GLubyte colours[] = {
 
-	255, 255, 255,
-	80, 80, 80,
-	30, 30, 30,
-	30, 30, 30
+	255, 0, 0,
+	0, 255, 0,
+	0, 0, 255,
+	255, 255, 0
 };
 
 static float texCoords[] = {
@@ -25,6 +25,8 @@ static float texCoords[] = {
 	0.0f, 0.0f
 };
 
+// Indices for 2 triangles
+static GLuint indices[]{ 0, 2, 1, 0, 3, 2 };
 
 void drawTextureQuadVertexArray(GLuint texture) {
 
