@@ -39,6 +39,8 @@ static float starTextureCoords[] = { 0.5f, 1.0f,
 
 static GLuint starIndices[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
+
+
 // Variables to store VBO id numbers created by OpenGL
 static GLuint starPosVBO;
 static GLuint starColourVBO;
@@ -64,6 +66,10 @@ void setupStarVBO() {
 	glGenBuffers(1, &starIndicesVBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, starIndicesVBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(starIndices), starIndices, GL_STATIC_DRAW);
+
+	// Unbind buffers once done
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
 void drawStarVBO() {
@@ -86,5 +92,9 @@ void drawStarVBO() {
 	// Draw the object
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, starIndicesVBO);
 	glDrawElements(GL_LINE_LOOP, 10, GL_UNSIGNED_INT, (GLvoid*)0);
+
+	// Unbind buffers once done
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 

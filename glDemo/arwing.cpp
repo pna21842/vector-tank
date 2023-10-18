@@ -67,6 +67,70 @@ static glm::vec2 vertices[] = {
 	glm::vec2(3.517f, -3.691f) // v59
 };
 
+static glm::vec3 colours[] = {
+
+	glm::vec3(0.9f, 0.91f, 0.97f), // v0
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v1
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v2
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v3
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v4
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v5
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v6
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v7
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v8
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v9
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v10
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v11
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v12
+	glm::vec3(0.9f, 0.91f, 0.97f),  // v13
+	glm::vec3(0.9f, 0.91f, 0.97f), // v14
+	glm::vec3(0.9f, 0.91f, 0.97f), // v15
+	glm::vec3(0.9f, 0.91f, 0.97f), // v16
+	glm::vec3(0.9f, 0.91f, 0.97f), // v17
+	glm::vec3(0.9f, 0.91f, 0.97f), // v18
+	glm::vec3(0.9f, 0.91f, 0.97f), // v19
+	glm::vec3(0.9f, 0.91f, 0.97f), // v20
+	glm::vec3(0.9f, 0.91f, 0.97f), // v21
+	glm::vec3(0.9f, 0.91f, 0.97f), // v22
+	glm::vec3(0.9f, 0.91f, 0.97f), // v23
+	glm::vec3(0.9f, 0.91f, 0.97f), // v24
+	glm::vec3(0.9f, 0.91f, 0.97f), // v25
+	glm::vec3(0.9f, 0.91f, 0.97f), // v26
+	glm::vec3(0.9f, 0.91f, 0.97f), // v27
+	glm::vec3(0.9f, 0.91f, 0.97f), // v28
+	glm::vec3(0.9f, 0.91f, 0.97f), // v29
+	glm::vec3(0.9f, 0.91f, 0.97f), // v30
+	glm::vec3(0.9f, 0.91f, 0.97f), // v31
+	glm::vec3(0.9f, 0.91f, 0.97f), // v32
+	glm::vec3(0.79f, 0.67f, 0.20f), // v33
+	glm::vec3(0.9f, 0.91f, 0.97f), // v34
+	glm::vec3(0.93f, 0.79f, 0.24f), // v35
+	glm::vec3(0.9f, 0.91f, 0.97f), // v36
+	glm::vec3(0.9f, 0.91f, 0.97f), // v37
+	glm::vec3(0.9f, 0.91f, 0.97f), // v38
+	glm::vec3(0.9f, 0.91f, 0.97f), // v39
+	glm::vec3(0.9f, 0.91f, 0.97f), // v40
+	glm::vec3(0.9f, 0.91f, 0.97f), // v41
+	glm::vec3(0.9f, 0.91f, 0.97f), // v42
+	glm::vec3(0.9f, 0.91f, 0.97f), // v43
+	glm::vec3(0.9f, 0.91f, 0.97f), // v44
+	glm::vec3(0.9f, 0.91f, 0.97f), // v45
+	glm::vec3(0.9f, 0.91f, 0.97f), // v46
+	glm::vec3(0.9f, 0.91f, 0.97f), // v47
+	glm::vec3(0.9f, 0.91f, 0.97f), // v48
+	glm::vec3(0.9f, 0.91f, 0.97f), // v49
+	glm::vec3(0.9f, 0.91f, 0.97f), // v50
+	glm::vec3(0.9f, 0.91f, 0.97f), // v51
+	glm::vec3(0.9f, 0.91f, 0.97f), // v52
+	glm::vec3(0.9f, 0.91f, 0.97f), // v53
+	glm::vec3(0.9f, 0.91f, 0.97f), // v54
+	glm::vec3(0.9f, 0.91f, 0.97f), // v55
+	glm::vec3(0.9f, 0.91f, 0.97f), // v56
+	glm::vec3(0.9f, 0.91f, 0.97f), // v57
+	glm::vec3(0.9f, 0.91f, 0.97f), // v58
+	glm::vec3(0.9f, 0.91f, 0.97f) // v59
+};
+
 static GLuint indices[] = {
 
 	0, 1, 2,
@@ -122,8 +186,8 @@ static GLuint indices[] = {
 	33, 34, 29,
 	29, 34, 30,
 	34, 31, 30,
-	32, 35, 33,
-	33, 35, 34,
+	33, 32, 35,
+	35, 34, 33,
 
 	// right engine and wing
 	4, 8, 37,
@@ -168,11 +232,11 @@ void drawArwingVertexArray() {
 
 	// Declare the data type of the array
 	glVertexPointer(2, GL_FLOAT, 0, vertices);
-	//glColorPointer(3, GL_UNSIGNED_BYTE, 0, colours);
+	glColorPointer(3, GL_FLOAT, 0, colours);
 
 	// Declare which arrays are needed for the semi-circle object
 	glEnableClientState(GL_VERTEX_ARRAY);
-	//glEnableClientState(GL_COLOR_ARRAY);
+	glEnableClientState(GL_COLOR_ARRAY);
 
 	// Draw the object
 	glDrawElements(GL_TRIANGLES, 95 * 3, GL_UNSIGNED_INT, indices);

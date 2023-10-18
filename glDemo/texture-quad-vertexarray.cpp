@@ -28,6 +28,7 @@ static float texCoords[] = {
 // Indices for 2 triangles
 static GLuint indices[]{ 0, 2, 1, 0, 3, 2 };
 
+
 void drawTextureQuadVertexArray(GLuint texture) {
 
 	glEnable(GL_TEXTURE_2D);
