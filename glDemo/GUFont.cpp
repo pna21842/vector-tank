@@ -85,9 +85,9 @@ void GUFont::renderText(const float x, const float y, const glm::mat4& view, con
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
-	glRasterPos2f(x, y);
-
+	
 	glColor4f(colour.r, colour.g, colour.b, colour.a);
+	glRasterPos2f(x, y);
 
 	glPushAttrib(GL_LIST_BIT);
 

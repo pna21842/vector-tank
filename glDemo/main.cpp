@@ -80,7 +80,7 @@ int main() {
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f); // setup background colour to be black
 
 	// Setup font
-	font = new GUFont(wstring(L"Courier New"), 18);
+	font = new GUFont(wstring(L"Courier New"), 16);
 	
 
 	// Setup projection matrix
@@ -126,22 +126,57 @@ void renderScene()
 	mat4 I = identity<mat4>();
 	glLoadMatrixf((GLfloat*)&I);
 
+	glPushMatrix();
+
 	worldAxes.render();
 
 	tank.render();
+	
+	glPopMatrix();
 
+
+	//
 	// Render text
+	//
+	
+	// Render backing quad
+	glBegin(GL_QUADS);
+	glColor3ub(100, 100, 100);
+	glVertex2f(-1.0f, 1.0f);
+	glVertex2f(-1.0f, 0.45f);
+	glVertex2f(-0.1f, 0.45f);
+	glVertex2f(-0.1f, 1.0f);
+	glEnd();
+
 	static mat4 fontViewMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, -1.0f, 1.0f);
 	mat4 T = tank.getModelTransformMatrix();
 
-	font->renderText(-4.0f, 2.0f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "Tank Angle = % .3f", tank.getAngleDegrees());
-
 	// Print x column vector (in red)
-	font->renderText(-4.0f, 3.6f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].x);
-	font->renderText(-4.0f, 3.3f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].y);
-	font->renderText(-4.0f, 3.0f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].z);
-	font->renderText(-4.0f, 2.7f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].w);
+	font->renderText(-4.0f, 3.6f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].x);
+	font->renderText(-4.0f, 3.3f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].y);
+	font->renderText(-4.0f, 3.0f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].z);
+	font->renderText(-4.0f, 2.7f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].w);
 
+	// Print y column vector (in green)
+	font->renderText(-3.2f, 3.6f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].x);
+	font->renderText(-3.2f, 3.3f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].y);
+	font->renderText(-3.2f, 3.0f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].z);
+	font->renderText(-3.2f, 2.7f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].w);
+
+	// Print z column vector (in blue)
+	font->renderText(-2.4f, 3.6f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].x);
+	font->renderText(-2.4f, 3.3f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].y);
+	font->renderText(-2.4f, 3.0f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].z);
+	font->renderText(-2.4f, 2.7f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].w);
+
+	// Print w column vector (in yellow)
+	font->renderText(-1.6f, 3.6f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[3].x);
+	font->renderText(-1.6f, 3.3f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[3].y);
+	font->renderText(-1.6f, 3.0f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[3].z);
+	font->renderText(-1.6f, 2.7f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[3].w);
+
+	// Print angle of tank
+	font->renderText(-4.0f, 2.0f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "Tank Angle = % .2f", tank.getAngleDegrees());
 }
 
 
