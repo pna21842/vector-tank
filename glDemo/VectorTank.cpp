@@ -4,19 +4,21 @@ using namespace std;
 using namespace glm;
 
 
+// From the stored position and rotation angle derive the matrices needed to perform the transformations
 void VectorTank::calculateDerivedMatices(void) {
 
 	T = translate(identity<mat4>(), vec3(pos.x, pos.y, 0.0f));
 	R = glm::rotate(identity<mat4>(), tankTheta, vec3(0.0f, 0.0f, 1.0f));
-	//T = mat4::translationMatrix(pos.x, pos.y, 0.0f);
-	//R = mat4::rotationMatrix(0.0f, 0.0f, tankTheta);
 	TR = T * R;
+
+	mat4 S = scale(identity<mat4>(), vec3(1.0f, 1.0f, 1.0f));
 }
 
 
 VectorTank::VectorTank() {
 }
 
+// Initialise the tank variables and VBOs for rendering
 void VectorTank::initialise(float tankX, float tankY, float tankTheta) {
 
 	pos = vec2(tankX, tankY);
@@ -166,6 +168,7 @@ void VectorTank::render(void) {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+	// Render local axes to show local coordinate frame based on current rotation
 	localAxes.render();
 }
 

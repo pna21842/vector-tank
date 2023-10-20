@@ -90,13 +90,14 @@ int main() {
 	glMatrixMode(GL_MODELVIEW);
 	
 	
+	// Setup objects used in scene
 	worldAxes.initialise(2.0f, 1.0f, true, 0xFF00);
 	tank.initialise(0.0f, 0.0f, 0.0f);
+
 
 	//
 	// 2. Main loop
 	// 
-	
 
 	// Loop while program is not terminated.
 	while (!glfwWindowShouldClose(window)) {
@@ -105,10 +106,7 @@ int main() {
 		renderScene();						// Render into the current buffer
 		glfwSwapBuffers(window);			// Displays what was just rendered (using double buffering).
 
-		// Poll events (key presses, mouse events)
-		// glfwWaitEvents();				// Use this if no animation.
-		// glfwWaitEventsTimeout(1.0/60.0);	// Use this to animate at 60 frames/sec (timing is NOT reliable)
-		glfwPollEvents();					// Use this version when animating as fast as possible
+		glfwPollEvents();					// poll for events without waiting for any events to arrive
 	}
 
 	glfwTerminate();
@@ -126,12 +124,16 @@ void renderScene()
 	mat4 I = identity<mat4>();
 	glLoadMatrixf((GLfloat*)&I);
 
+	// Save transforms
 	glPushMatrix();
-
+	
+	// Draw main principle axes
 	worldAxes.render();
 
+	// Draw tank
 	tank.render();
 	
+	// Restore transforms
 	glPopMatrix();
 
 
@@ -139,7 +141,7 @@ void renderScene()
 	// Render text
 	//
 	
-	// Render backing quad
+	// Render backing quad (immediate mode used here!)
 	glBegin(GL_QUADS);
 	glColor3ub(100, 100, 100);
 	glVertex2f(-1.0f, 1.0f);
@@ -148,28 +150,29 @@ void renderScene()
 	glVertex2f(-0.1f, 1.0f);
 	glEnd();
 
+	// Setup view transform for text rendering
 	static mat4 fontViewMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, -1.0f, 1.0f);
-	mat4 T = tank.getModelTransformMatrix();
+	mat4 T = tank.getModelTransformMatrix(); // get matrix to display
 
-	// Print x column vector (in red)
+	// Print x column vector (in red) of matrix T
 	font->renderText(-4.0f, 3.6f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].x);
 	font->renderText(-4.0f, 3.3f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].y);
 	font->renderText(-4.0f, 3.0f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].z);
 	font->renderText(-4.0f, 2.7f, fontViewMatrix, vec4(0.8f, 0.5f, 0.5f, 1.0f), "% .2f", T[0].w);
 
-	// Print y column vector (in green)
+	// Print y column vector (in green) of matrix T
 	font->renderText(-3.2f, 3.6f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].x);
 	font->renderText(-3.2f, 3.3f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].y);
 	font->renderText(-3.2f, 3.0f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].z);
 	font->renderText(-3.2f, 2.7f, fontViewMatrix, vec4(0.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[1].w);
 
-	// Print z column vector (in blue)
+	// Print z column vector (in blue) of matrix T
 	font->renderText(-2.4f, 3.6f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].x);
 	font->renderText(-2.4f, 3.3f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].y);
 	font->renderText(-2.4f, 3.0f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].z);
 	font->renderText(-2.4f, 2.7f, fontViewMatrix, vec4(0.0f, 0.0f, 0.75f, 1.0f), "% .2f", T[2].w);
 
-	// Print w column vector (in yellow)
+	// Print w column vector (in yellow) of matrix T
 	font->renderText(-1.6f, 3.6f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[3].x);
 	font->renderText(-1.6f, 3.3f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[3].y);
 	font->renderText(-1.6f, 3.0f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "% .2f", T[3].z);

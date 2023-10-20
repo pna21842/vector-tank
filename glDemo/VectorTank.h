@@ -15,23 +15,27 @@ class VectorTank {
 	// Tank orientation (in radians)
 	float			tankTheta = 0.0f;
 
+	// Vertex buffer object IDs
 	GLuint			tankPosVBO = 0;
 	GLuint			tankColourVBO = 0;
 	GLuint			tankIndexVBO = 0;
 
+	// Render axes - used to show local coordinate frame
+	PrincipleAxes	localAxes = PrincipleAxes();
+
+
 	// Derived values - matrices based on position and orientation - updated when tank moved or rotated
 	glm::mat4		T, R, TR; // T (translation); R (rotation)
 
-	// Render axes - for demo!
-	PrincipleAxes	localAxes = PrincipleAxes();
 
 	// Private API
 
 	void calculateDerivedMatices(void);
 
 
-public:
+	// Public methods
 
+public:
 
 	VectorTank();
 	void initialise(float tankX, float tankY, float tankTheta);
