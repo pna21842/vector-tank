@@ -1,29 +1,36 @@
 
 #include "core.h"
-#include "semi-circle-immediate-mode.h"
-#include "semi-circle-vertexarray.h"
-#include "texture-quad-immediate.h"
-#include "texture-quad-vertexarray.h"
-#include "texture-quad-interleaved.h"
-#include "arwing.h"
-#include "star-vbo.h"
+#include "PrincipleAxes.h"
+#include "VectorTank.h"
+#include "GUFont.h"
 
 using namespace std;
-
+using namespace glm;
 
 // global variables
 
-// Example exture object
-GLuint playerTexture;
+PrincipleAxes worldAxes = PrincipleAxes();
+VectorTank tank = VectorTank();
+
+// Variables to store text rendering properties and font
+GUFont* font;
+glm::mat4			fontViewMatrix;
+glm::vec4			fontColour;
 
 
 // Window size
 const unsigned int initWidth = 512;
 const unsigned int initHeight = 512;
 
+// keyboard state
+bool forwardPressed = false;
+bool reversePressed = false;
+bool rotateLeftPressed = false;
+bool rotateRightPressed = false;
+
+
 // Function prototypes
 void renderScene();
-GLuint loadTexture(string filename, FREE_IMAGE_FORMAT srcImageType);
 void resizeWindow(GLFWwindow* window, int width, int height);
 void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int mods);
 void updateScene();
@@ -70,20 +77,21 @@ int main() {
 	resizeWindow(window, initWidth, initHeight);
 
 	// Initialise scene - geometry and shaders etc
-	glClearColor(0.0f, 0.0f, 0.0f, 0.0f); // setup background colour to be black
+	glClearColor(0.3f, 0.3f, 0.3f, 1.0f); // setup background colour to be black
 
-	gluOrtho2D(-10.0f, 10.0f, -10.0f, 10.0f);
+	// Setup font
+	font = new GUFont(wstring(L"Courier New"), 18);
+	
 
+	// Setup projection matrix
+	glMatrixMode(GL_PROJECTION);
+	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
 
-	//
-	// Setup textures
-	//
-
-	playerTexture = loadTexture(string("Assets\\Textures\\player1_ship.png"), FIF_PNG);
-
-	// Setup VBOs
-	setupStarVBO();
-
+	glMatrixMode(GL_MODELVIEW);
+	
+	
+	worldAxes.initialise(2.0f, 1.0f, true, 0xFF00);
+	tank.initialise(0.0f, 0.0f, 0.0f);
 
 	//
 	// 2. Main loop
@@ -114,72 +122,26 @@ void renderScene()
 	// Clear the rendering window
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//drawSemiCircleImmediate();
-	//drawSemiCircleVertexArray();
-	//drawTexturedQuadImmediate(playerTexture);
-	//drawTextureQuadVertexArray(playerTexture);
-	//drawTextureQuadInterleaved(playerTexture);
-	//drawArwingImmediate();
-	//drawArwingVertexArray();
-	drawStarVBO();
-}
+	// Clear transformations for the scene
+	mat4 I = identity<mat4>();
+	glLoadMatrixf((GLfloat*)&I);
 
+	worldAxes.render();
 
-// Utility function to load an image using FreeImage, convert to 32 bits-per-pixel (bpp) and setup and return a new texture object based on this.
-GLuint loadTexture(string filename, FREE_IMAGE_FORMAT srcImageType) {
+	tank.render();
 
-	// Load and validate bitmap
-	FIBITMAP* loadedBitmap = FreeImage_Load(srcImageType, filename.c_str(), BMP_DEFAULT);
+	// Render text
+	static mat4 fontViewMatrix = glm::ortho(-4.0f, 4.0f, -4.0f, 4.0f, -1.0f, 1.0f);
+	mat4 T = tank.getModelTransformMatrix();
 
-	if (!loadedBitmap) {
+	font->renderText(-4.0f, 2.0f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "Tank Angle = % .3f", tank.getAngleDegrees());
 
-		cout << "FreeImage: Could not load image " << filename << endl;
-		return 0;
-	}
+	// Print x column vector (in red)
+	font->renderText(-4.0f, 3.6f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].x);
+	font->renderText(-4.0f, 3.3f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].y);
+	font->renderText(-4.0f, 3.0f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].z);
+	font->renderText(-4.0f, 2.7f, fontViewMatrix, vec4(1.0f, 0.0f, 0.0f, 1.0f), "% .3f", T[0].w);
 
-	// Comvert to RGBA format
-	FIBITMAP* bitmap32bpp = FreeImage_ConvertTo32Bits(loadedBitmap);
-	FreeImage_Unload(loadedBitmap);
-
-	if (!bitmap32bpp) {
-
-		cout << "FreeImage: Conversion to 32 bits unsuccessful for image " << filename << endl;
-		return 0;
-	}
-
-	// Image loaded and converted - setup new texture object
-	GLuint newTexture = 0;
-
-	// If image loaded, setup new texture object in OpenGL
-	glGenTextures(1, &newTexture); // can create more than 1!
-
-	if (newTexture) {
-
-		glBindTexture(GL_TEXTURE_2D, newTexture);
-
-		// Setup texture image properties
-		glTexImage2D(
-			GL_TEXTURE_2D,
-			0,
-			GL_RGBA,
-			FreeImage_GetWidth(bitmap32bpp),
-			FreeImage_GetHeight(bitmap32bpp),
-			0,
-			GL_BGRA,
-			GL_UNSIGNED_BYTE,
-			FreeImage_GetBits(bitmap32bpp));
-
-		// Setup texture filter and wrap properties
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-	}
-
-	// Once the texture has been setup, the image data is copied into OpenGL.  We no longer need the originally loaded image
-	FreeImage_Unload(bitmap32bpp);
-
-	return newTexture;
 }
 
 
@@ -202,18 +164,82 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 				glfwSetWindowShouldClose(window, true);
 				break;
 
+			case GLFW_KEY_UP:
+				forwardPressed = true;
+				break;
+
+			case GLFW_KEY_DOWN:
+				reversePressed = true;
+				break;
+
+			case GLFW_KEY_LEFT:
+				rotateLeftPressed = true;
+				break;
+
+			case GLFW_KEY_RIGHT:
+				rotateRightPressed = true;
+				break;
+
+
 			default:
 			{
 			}
 		}
 	}
 	else if (action == GLFW_RELEASE) {
+		
 		// handle key release events
+
+		// check which key was released...
+		switch (key)
+		{
+			case GLFW_KEY_UP:
+				forwardPressed = false;
+				break;
+
+			case GLFW_KEY_DOWN:
+				reversePressed = false;
+				break;
+
+			case GLFW_KEY_LEFT:
+				rotateLeftPressed = false;
+				break;
+
+			case GLFW_KEY_RIGHT:
+				rotateRightPressed = false;
+				break;
+
+			default:
+			{
+			}
+		}
 	}
 }
 
 
 // Function called to animate elements in the scene
 void updateScene() {
+
+	const float tDelta = 0.0005f; // fixed for now - add game clock later!
+
+	if (forwardPressed) {
+
+		tank.move(1.0f, tDelta);
+	}
+
+	if (reversePressed) {
+
+		tank.move(-1.0f, tDelta);
+	}
+
+	if (rotateLeftPressed) {
+
+		tank.rotate(1.0f, tDelta);
+	}
+
+	if (rotateRightPressed) {
+
+		tank.rotate(-1.0f, tDelta);
+	}
 }
 

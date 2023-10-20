@@ -389,7 +389,7 @@ void drawArwingImmediate() {
 	glColor3ub(59, 93, 195);
 	glVertex2f(-1.720f, -0.426f);
 	glVertex2f(-2.099f, -0.540f);
-	glVertex2f(-2.094, -2.083);
+	glVertex2f(-2.094f, -2.083f);
 
 	glVertex2f(-1.720f, -0.426f);
 	glVertex2f(-2.094, -2.083);
