@@ -64,5 +64,5 @@ public:
 
 	// Rendering methods
 
-	void render(void);
+	void render(glm::mat4 currentTransform);
 };

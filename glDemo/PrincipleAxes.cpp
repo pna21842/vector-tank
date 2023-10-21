@@ -53,7 +53,7 @@ void PrincipleAxes::initialise(float lineWidth, float lineLength, bool enableSti
 	this->stipplePattern = stipplePattern;
 }
 
-void PrincipleAxes::render() {
+void PrincipleAxes::render(mat4 currentTransform) {
 
 	// Enable line rendering state
 	glLineWidth(lineWidth);
@@ -78,6 +78,8 @@ void PrincipleAxes::render() {
 
 	// Draw the axes
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indicesVBO);
+
+	glLoadMatrixf((GLfloat*)&currentTransform);
 	glDrawElements(GL_LINES, 4, GL_UNSIGNED_BYTE, (GLvoid*)0);
 
 	// Unbind buffers once done

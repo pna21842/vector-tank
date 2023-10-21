@@ -143,10 +143,12 @@ void VectorTank::rotate(float direction, float tDelta) {
 
 #pragma region Rendering methods
 
-void VectorTank::render(void) {
+void VectorTank::render(mat4 currentTransform) {
+	
+	mat4 tankTransform = currentTransform * TR;
 	
 	// Apply transform for tank
-	glMultMatrixf((GLfloat*)&TR);
+	glLoadMatrixf((GLfloat*)&tankTransform);
 
 	// Declare the data type of the array
 	glBindBuffer(GL_ARRAY_BUFFER, tankPosVBO);
@@ -169,7 +171,7 @@ void VectorTank::render(void) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
 	// Render local axes to show local coordinate frame based on current rotation
-	localAxes.render();
+	localAxes.render(tankTransform);
 }
 
 #pragma endregion

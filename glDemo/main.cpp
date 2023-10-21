@@ -83,13 +83,6 @@ int main() {
 	font = new GUFont(wstring(L"Courier New"), 16);
 	
 
-	// Setup projection matrix
-	glMatrixMode(GL_PROJECTION);
-	gluOrtho2D(-1.0f, 1.0f, -1.0f, 1.0f);
-
-	glMatrixMode(GL_MODELVIEW);
-	
-	
 	// Setup objects used in scene
 	worldAxes.initialise(2.0f, 1.0f, true, 0xFF00);
 	tank.initialise(0.0f, 0.0f, 0.0f);
@@ -120,21 +113,14 @@ void renderScene()
 	// Clear the rendering window
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	// Clear transformations for the scene
-	mat4 I = identity<mat4>();
-	glLoadMatrixf((GLfloat*)&I);
+	// Setup projection matrix
+	mat4 orthoProjection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f);
 
-	// Save transforms
-	glPushMatrix();
-	
 	// Draw main principle axes
-	worldAxes.render();
+	worldAxes.render(orthoProjection);
 
 	// Draw tank
-	tank.render();
-	
-	// Restore transforms
-	glPopMatrix();
+	tank.render(orthoProjection);
 
 
 	//
@@ -142,6 +128,10 @@ void renderScene()
 	//
 	
 	// Render backing quad (immediate mode used here!)
+
+	// Setup transform to just the projection
+	glLoadMatrixf((GLfloat*)&orthoProjection);
+
 	glBegin(GL_QUADS);
 	glColor3ub(100, 100, 100);
 	glVertex2f(-1.0f, 1.0f);

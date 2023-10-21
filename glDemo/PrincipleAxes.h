@@ -17,5 +17,5 @@ public:
 	PrincipleAxes();
 	void initialise(float lineWidth = 1.0f, float lineLength = 1.0f, bool enableStipple = false, GLushort stipplePattern = 0xFFFF);
 
-	void render();
+	void render(glm::mat4 currentTransform);
 };
