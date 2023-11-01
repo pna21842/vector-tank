@@ -8,9 +8,9 @@ class VectorTank {
 	// Tank position
 	glm::vec2			pos = glm::vec2(0.0f, 0.0f);
 
-	// Tank velocity (scalar value - we'll use orientation to determine direction)
-	// Distance per-second (constant for this demo)
-	const float		velocity = 0.4f;
+	// Tank velocity (distance per-second)
+	const float		moveVelocity = 0.4f;
+	const float		rotateVelocity = 45.0f; // degrees-per-second
 
 	// Tank orientation (in radians)
 	float			tankTheta = 0.0f;
@@ -56,10 +56,10 @@ public:
 	// Interaction methods
 
 	// Move forward (direction = 1) or backward (direction = -1)
-	void move(float direction, float tDelta);
+	void move(float direction, double tDelta);
 
 	// Rotate by constant rate (30 degrees per second) in direction determined by direction = 1 (counter-clockwise - following convention) or -1 (clockwise)
-	void rotate(float direction, float tDelta);
+	void rotate(float direction, double tDelta);
 
 
 	// Rendering methods

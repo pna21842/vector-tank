@@ -1,14 +1,15 @@
 
-#include "core.h"
-#include "PrincipleAxes.h"
 #include "VectorTank.h"
+#include "GUClock.h"
 #include "GUFont.h"
+
 
 using namespace std;
 using namespace glm;
 
 // global variables
 
+GUClock* gameClock = nullptr;
 PrincipleAxes worldAxes = PrincipleAxes();
 VectorTank tank = VectorTank();
 
@@ -42,6 +43,7 @@ int main() {
 	// 1. Initialisation
 	//
 	
+	gameClock = new GUClock();
 
 	// Initialise glfw and setup window
 	glfwInit();
@@ -103,6 +105,13 @@ int main() {
 	}
 
 	glfwTerminate();
+
+	if (gameClock) {
+
+		gameClock->stop();
+		gameClock->reportTimingData();
+	}
+
 	return 0;
 }
 
@@ -170,6 +179,39 @@ void renderScene()
 
 	// Print angle of tank
 	font->renderText(-4.0f, 2.0f, fontViewMatrix, vec4(1.0f, 1.0f, 0.0f, 1.0f), "Tank Angle = % .2f", tank.getAngleDegrees());
+}
+
+
+// Function called to animate elements in the scene
+void updateScene() {
+
+	double tDelta = 0.0f;
+
+	if (gameClock) {
+
+		gameClock->tick();
+		tDelta = gameClock->gameTimeDelta();
+	}
+	
+	if (forwardPressed) {
+
+		tank.move(1.0f, tDelta);
+	}
+
+	if (reversePressed) {
+
+		tank.move(-1.0f, tDelta);
+	}
+
+	if (rotateLeftPressed) {
+
+		tank.rotate(1.0f, tDelta);
+	}
+
+	if (rotateRightPressed) {
+
+		tank.rotate(-1.0f, tDelta);
+	}
 }
 
 
@@ -244,30 +286,4 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	}
 }
 
-
-// Function called to animate elements in the scene
-void updateScene() {
-
-	const float tDelta = 0.0005f; // fixed for now - add game clock later!
-
-	if (forwardPressed) {
-
-		tank.move(1.0f, tDelta);
-	}
-
-	if (reversePressed) {
-
-		tank.move(-1.0f, tDelta);
-	}
-
-	if (rotateLeftPressed) {
-
-		tank.rotate(1.0f, tDelta);
-	}
-
-	if (rotateRightPressed) {
-
-		tank.rotate(-1.0f, tDelta);
-	}
-}
 

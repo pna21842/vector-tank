@@ -119,21 +119,22 @@ mat4 VectorTank::getModelTransformMatrix(void) {
 #pragma region Interaction methods
 
 // Move forward (direction = 1) or backward (direction = -1)
-void VectorTank::move(float direction, float tDelta) {
+void VectorTank::move(float direction, double tDelta) {
 
 	pos += vec2(
 
-		cosf(tankTheta) * direction * velocity * tDelta,
-		sinf(tankTheta) * direction * velocity * tDelta
+		cosf(tankTheta) * direction * moveVelocity * tDelta,
+		sinf(tankTheta) * direction * moveVelocity * tDelta
 	);
 
 	calculateDerivedMatices();
 }
 
 // Rotate by constant rate (30 degrees per second) in direction determined by direction = 1 (counter-clockwise - following convention) or -1 (clockwise)
-void VectorTank::rotate(float direction, float tDelta) {
+void VectorTank::rotate(float direction, double tDelta) {
 
-	tankTheta = std::fmodf(tankTheta + (glm::radians(1.0f) * 50.0f) * direction * tDelta, glm::pi<float>() * 2.0f);
+	float velocityRadians = glm::radians<float>(rotateVelocity); // convert rotate velocity into radians
+	tankTheta = std::fmodf(tankTheta + velocityRadians * direction * tDelta, glm::pi<float>() * 2.0f);
 
 	calculateDerivedMatices();
 }
